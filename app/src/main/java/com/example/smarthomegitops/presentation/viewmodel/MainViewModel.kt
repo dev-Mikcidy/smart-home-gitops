@@ -22,6 +22,41 @@ class MainViewModel(
 
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    fun forceReject(pullNumber: Int) {
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    repository.closePullRequest(pullNumber)
+                }
+
+                _uiState.value = UiState.Normal
+
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(
+                    "Force Reject failed: ${e.message ?: "Unknown error"}"
+                )
+            }
+        }
+    }
+
+    fun forceMerge(pullNumber: Int) {
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    repository.forceMerge()
+                    repository.closePullRequest(pullNumber)
+                }
+
+                _uiState.value = UiState.Normal
+
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(
+                    "Force Merge failed: ${e.message ?: "Unknown error"}"
+                )
+            }
+        }
+    }
+
     init {
         startPolling()
     }
@@ -34,6 +69,8 @@ class MainViewModel(
                     val pullRequests = withContext(Dispatchers.IO) {
                         repository.getOpenPullRequests()
                     }
+
+                    var detectedAlert: UiState.SecurityAlert? = null
 
                     for (pullRequest in pullRequests) {
 
@@ -48,16 +85,21 @@ class MainViewModel(
                             }
 
                             if (score > 0) {
-                                _uiState.value = UiState.SecurityAlert(
+                                detectedAlert = UiState.SecurityAlert(
                                     confidence = score,
-                                    rawText = comment.body ?: ""
+                                    rawText = comment.body ?: "",
+                                    pullNumber = pullRequest.number
                                 )
                             }
                         }
                     }
 
+                    _uiState.value = detectedAlert ?: UiState.Normal
+
                 } catch (e: Exception) {
-                    // Keep polling if a network or API error occurs.
+                    _uiState.value = UiState.Error(
+                        "Connection error: ${e.message ?: "Unable to contact GitHub"}"
+                    )
                 }
 
                 delay(30_000)

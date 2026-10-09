@@ -6,6 +6,11 @@ sealed interface UiState {
 
     data class SecurityAlert(
         val confidence: Int,
-        val rawText: String
+        val rawText: String,
+        val pullNumber: Int
+    ) : UiState
+
+    data class Error(
+        val message: String
     ) : UiState
 }

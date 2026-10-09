@@ -1,4 +1,5 @@
 package com.example.smarthomegitops.data.model
 
-class PullRequestUpdate {
-}
+data class PullRequestUpdate(
+    val state: String
+)

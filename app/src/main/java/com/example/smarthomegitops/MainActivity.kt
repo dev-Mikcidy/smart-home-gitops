@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smarthomegitops.presentation.viewmodel.MainViewModel
 import com.example.smarthomegitops.presentation.viewmodel.UiState
 import com.example.smarthomegitops.ui.theme.SmartHomeGitOpsTheme
+import androidx.compose.material3.Button
 
 class MainActivity : ComponentActivity() {
 
@@ -33,14 +34,20 @@ class MainActivity : ComponentActivity() {
                 val viewModel: MainViewModel = viewModel()
                 val uiState by viewModel.uiState.collectAsState()
 
-                SecurityScreen(uiState)
+                SecurityScreen(
+                    uiState = uiState,
+                    viewModel = viewModel
+                )
             }
         }
     }
 }
 
 @androidx.compose.runtime.Composable
-fun SecurityScreen(uiState: UiState) {
+fun SecurityScreen(
+    uiState: UiState,
+    viewModel: MainViewModel
+) {
 
     when (uiState) {
 
@@ -86,6 +93,43 @@ fun SecurityScreen(uiState: UiState) {
 
                 Text(
                     text = uiState.rawText,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+
+                Button(
+                    onClick = {
+                        viewModel.forceReject(uiState.pullNumber)
+                    },
+                    modifier = Modifier.padding(top = 24.dp)
+                ) {
+                    Text("FORCE REJECT")
+                }
+                Button(
+                    onClick = {
+                        viewModel.forceMerge(uiState.pullNumber)
+                    },
+                    modifier = Modifier.padding(top = 12.dp)
+                ) {
+                    Text("FORCE MERGE")
+                }
+            }
+        }
+        is UiState.Error -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "ERROR",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color.Red
+                )
+
+                Text(
+                    text = uiState.message,
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
