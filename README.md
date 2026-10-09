@@ -104,40 +104,19 @@ SECURITY ALERT
 
 When a security alert is detected, additional information can be presented to the user, including the confidence level and the Pull Request associated with the alert.
 
-## 📱 UI
+## 📱 App Screenshots
 
-The application provides a security monitoring interface where repository activity can be displayed and analyzed.
+### Normal State
 
-Example states include:
+The app displays a normal status when no security threats are detected.
 
-### Normal
-
-```text
-┌─────────────────────────────┐
-│                             │
-│          NORMAL             │
-│                             │
-│   No security threat        │
-│   detected                  │
-│                             │
-└─────────────────────────────┘
-```
+![SmartHomeGitOps Normal State](screenshots/normal-state.png)
 
 ### Security Alert
 
-```text
-┌─────────────────────────────┐
-│                             │
-│     SECURITY ALERT          │
-│                             │
-│   Suspicious activity       │
-│   detected                  │
-│                             │
-│  [ FORCE REJECT ]           │
-│  [ FORCE MERGE  ]           │
-│                             │
-└─────────────────────────────┘
-```
+The app displays a security alert when potentially suspicious content is detected, showing the confidence level, the associated comment, and the available actions.
+
+![SmartHomeGitOps Security Alert](screenshots/security-alert.png)
 
 ## 📂 Project Structure
 
